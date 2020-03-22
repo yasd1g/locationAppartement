@@ -49,22 +49,24 @@
                 </div>
             </div>
             <div class="col">
-                <div class="row">
-                    <div class="col-4">
-                        <img src="http://placehold.it/64x64" alt="Avatar d'Adem">
+
+                {% set a = ad.author %}
+
+                <div class="row mb-3 align-items-center">
+                    <div class="col-3">
+                        <a href="{{ path('user_show', {'slug' :  a.slug }) }}">
+                            <img class="avatar avatar-medium" src="{{ ad.author.picture }}  alt="Avatar de {{ a.fullName }}">
+                        </a>
                     </div>
                     <div class="col">
-                        <h3>Adem Rayni</h3>
-                        <span class="badge badge-primary">3 annaonces</span>
+                        <a href="{{ path('user_show', {'slug' :  a.slug }) }}">
+                            <h3>{{ a.fullName }}</h3>
+                        </a>
+                        <span class="badge badge-primary">{{ a.ads | length }} annonces</span>
 
                     </div>
                 </div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A ad blanditiis debitis dolorem eaque error et
-                    exercitationem incidunt vel veniam.</p>
-                <p>Cupiditate deserunt expedita explicabo inventore ipsam iusto natus optio quam vero, voluptatum? Officia,
-                    quos, sed? Eveniet ex recusandae repudiandae sed.</p>
-                <p>Accusantium asperiores cum deserunt ducimus eligendi eos inventore laudantium maxime modi sunt. At
-                    consequatur doloremque facere, id iure obcaecati optio?</p>
+                {{ a.description | raw }}
             </div>
         </div>
     </div>

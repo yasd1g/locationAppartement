@@ -21,13 +21,19 @@ h4.card-title a{
     color: black;
 }
 
+
 .avatar{
     border-radius: 50%;
     max-width: 128px;
     max-height: 128px;
 }
 
-.avatar-medium {
+.avatar-medium{
     max-width: 64px;
     max-height: 64px;
+}
+
+.avatar-mini{
+    max-width: 24px;
+    max-height: 24px;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+
 use App\Entity\Ad;
 use App\Form\AdType;
 use App\Repository\AdRepository;
@@ -12,10 +13,14 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AdController extends AbstractController
 {
+
     /**
      * permet d'afficher la liste des annonces
      *
      * @Route("/ads", name="ads_index")
+     *
+     * @param AdRepository $repo
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index(AdRepository $repo)
     {
@@ -31,6 +36,10 @@ class AdController extends AbstractController
      * permet de créer une annonce
      *
      * @Route("/ads/new", name="ads_create")
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function create(Request $request, EntityManagerInterface $manager)
     {
@@ -45,6 +54,7 @@ class AdController extends AbstractController
                 $image->setAd($ad);
                 $manager->persist($image);
             }
+            $ad->setAuthor($this->getUser());
             $manager->persist($ad);
             $manager->flush();
 
@@ -64,12 +74,16 @@ class AdController extends AbstractController
         ]);
     }
 
+
     /**
      * permet d'afficher le formulaire d'édition
      *
-     * @param Ad $ad
-     * @return \Symfony\Component\HttpFoundation\Response
      * @Route("/ads/{slug}/edit", name="ads_edit")
+     *
+     * @param Ad $ad
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function edit(Ad $ad, Request $request, EntityManagerInterface $manager)
     {
@@ -101,13 +115,14 @@ class AdController extends AbstractController
         ]);
     }
 
+
     /**
      * permet d'afficher une seule annonce
      *
+     * @Route("/ads/{slug}", name="ads_show")
+     *
      * @param Ad $ad
      * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @Route("/ads/{slug}", name="ads_show")
      */
     public function show(Ad $ad)
     {
