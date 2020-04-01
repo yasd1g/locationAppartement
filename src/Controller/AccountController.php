@@ -10,7 +10,6 @@ use App\Form\RegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -159,6 +158,18 @@ class AccountController extends AbstractController
         return $this->render('user/index.html.twig', [
             'user' => $this->getUser()
         ]);
+    }
+
+    /**
+     * premet d'afficher la liste des réservations faites par l'utilisateur
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @Route("/account/bookings", name="account_bookings")
+     */
+    public function bookings()
+    {
+        return $this->render('account/bookings.html.twig');
     }
 
 }

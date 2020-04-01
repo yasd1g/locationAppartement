@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Réserver l'annonce{% endblock %}
+
+{% block stylesheets %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" />
+
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Réserver pour l'annonce : {{ ad.title }}</h1>
+        <p>Vous êtes sur le pont de réserver le bien de <strong>{{ ad.author.fullName}}</strong>, dites nous tout, on s'occupe du reste !</p>
+
+
+        {{ form_start(form) }}
+
+        <div class="alert alert-light">
+            <h2>Commencez par nous dire quelles sont les dates qui vous intéressent !</h2>
+            <div class="row">
+                <div class="col">
+                    {{ form_row(form.startDate) }}
+                </div>
+                <div class="col">
+                    {{ form_row(form.endDate) }}
+                </div>
+            </div>
+        <h4 class="mt-3">Montant du séjour : <span id="amount">...</span>&euro;</h4>
+        <span id="days">  </span> nuit(s) à {{ ad.price }} / nuit
+
+        <h4 class="mt-3">Vous avez un commenatire ?</h4>
+        {{ form_row(form.comment) }}
+        </div>
+
+
+        <h2>Vous avez terminé ?</h2>
+        <p>Vacances de rêve ? Hébergement pour le boulot ? Peu importe, on est avec vous !</p>
+
+        <button type="submit" class="btn btn-success">Je réserve !</button>
+
+        {{ form_end(form) }}
+
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+    <script>
+       $(document).ready(function () {
+           $('#booking_startDate, #booking_endDate').datepicker({
+
+{# changer le format de la date de US à FR #}
+      format: 'dd/mm/yyyy',
+{# mettre en evidence les jours impossibles à choisir et les mettre au format FR #}
+      datesDisabled:[
+          {% for day in ad.getNotAvailableDays() %}
+               "{{ day.format('d/m/Y') }}",
+          {% endfor %}
+      ],
+{# pour eviter de reserve avant je jour actuel "now" , on met la startdate à aujourdhui #}
+      startDate: new Date()
+  });
+
+           $('#booking_startDate, #booking_endDate').on('change',calculateAmount);
+});
+
+       function calculateAmount() {
+
+           // on chope les dates
+
+           const endDate = new Date($('#booking_endDate').val().replace(/(\d+)\/(\d+)\/(\d{4})/, '$3-$2-$1'));
+           // replace() on l'utilise dans ce cas pour recuperer la date a la US (Y-m-d) car javascript ne comprend pas lae format date francaise (d/m/Y)
+           // on utilise aussi l'expression reguliere pour gerer ca ( video 16 dossier 11 à 7min49 )
+           const startDate = new Date($('#booking_startDate').val().replace(/(\d+)\/(\d+)\/(\d{4})/, '$3-$2-$1'));
+
+           if (startDate && endDate && startDate <= endDate) {
+
+               const DAY_TIME = 24 * 60 * 60 * 1000;
+               const interval = endDate.getTime() - startDate.getTime();
+               const days = interval / DAY_TIME;
+               const amount = days * {{ ad.price }};
+
+
+               $('#days').text(days);
+               $('#amount').text(amount.toLocaleString('fr-FR')); // toLocaleString () c'est pour avoir la date en format francais
+           }
+
+
+       }
+
+
+</script>
+{% endblock %}
+
+
+
