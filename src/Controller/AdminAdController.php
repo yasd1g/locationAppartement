@@ -13,6 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminAdController extends AbstractController
 {
     /**
+     * permet d'afficher la liste des annonces
+     *
      * @Route("/admin/ads", name="admin_ads_index")
      */
     public function index(AdRepository $repo)
@@ -25,11 +27,13 @@ class AdminAdController extends AbstractController
     /**
      * permet d'afficher le formulaire d'edition
      *
-     * @param Ad $ad
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param Request                $request
+     * @param EntityManagerInterface $manager
+     * @param Ad                     $ad
      *
      * @Route("/admin/ads/{id}/edit", name="admin_ads_edit")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function edit(Request $request, EntityManagerInterface $manager, Ad $ad)
     {
@@ -54,5 +58,36 @@ class AdminAdController extends AbstractController
                 'form' => $form->createView()
             ]);
 
+    }
+
+    /**
+     * permet de supprimer une annonce
+     *
+     * @param EntityManagerInterface $manager
+     * @param Ad                     $ad
+     *
+     * @Route("/admin/ads/{id}/delete", name="admin_ads_delete")
+     *
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function delete(EntityManagerInterface $manager, Ad $ad)
+    {
+        if (count($ad->getBookings()) > 0){
+            $this->addFlash(
+                'warning',
+                "Vous ne pouvez pas supprimer l'annonce <strong>{$ad->getTitle()}</strong> car elle possède des réservations !"
+            );
+        } else {
+
+            $manager->remove($ad);
+            $manager->flush();
+
+            $this->addFlash(
+                'success',
+                "L'annonce <strong>{$ad->getTitle()}</strong> a bien été supprimée !"
+            );
+        }
+
+        return $this->redirectToRoute('admin_ads_index');
     }
 }
