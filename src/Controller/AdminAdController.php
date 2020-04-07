@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Ad;
 use App\Form\AdType;
-use App\Repository\AdRepository;
+use App\Service\PaginationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,12 +15,26 @@ class AdminAdController extends AbstractController
     /**
      * permet d'afficher la liste des annonces
      *
-     * @Route("/admin/ads", name="admin_ads_index")
+     * le \d+ veut dire que le requirement page prend un nombre ou plus
+     *
+     * @Route("/admin/ads/{page<\d+>?1}", name="admin_ads_index")
      */
-    public function index(AdRepository $repo)
+    public function index(PaginationService $pagination, $page)
     {
+        // ceil arrondi au nombre superieur cad si cest 3,5 on prendera 4
+        // sans paginationService
+        // $limit = 10;
+        // $page = 1 ( 1ere page ) ===> 1*10 -10 = 0 donc start = 0
+        // $page = 2 ( 2ieme page ) ===> 2*10 -10 = 10 donc start = 10   .... etc
+        // $start = $page * $limit - $limit;
+
+        // avec paginationService
+
+        $pagination->setEntityClass(Ad::class)
+                    ->setPage($page);
+
         return $this->render('admin/ad/index.html.twig', [
-            'ads' => $repo->findAll()
+            'pagination' => $pagination
         ]);
     }
 

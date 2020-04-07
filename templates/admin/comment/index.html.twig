@@ -7,7 +7,7 @@
         <h1 class="my-5">Adminitration des commentaires</h1>
 
         <table class="table table-hover">
-            <thead>
+            <thead class="thead-light">
             <tr>
                 <th>Id</th>
                 <th>Date</th>
@@ -19,7 +19,7 @@
             </tr>
             </thead>
             <tbody>
-            {% for comment in comments %}
+            {% for comment in pagination.data %}
                 <tr>
                     <td>{{ comment.id }}</td>
                     <td>{{ comment.createdAt | date('d/m/Y H:i') }}</td>
@@ -39,5 +39,6 @@
             {% endfor %}
             </tbody>
         </table>
+        {{ pagination.display() }}
     </div>
 {% endblock %}
